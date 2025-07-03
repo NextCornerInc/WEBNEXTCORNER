@@ -1,7 +1,7 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ['yourdomain.com'],
+    domains: ['www.nextcornerapp.com'], // ✅ Allow images from your domain
   },
 };
 
