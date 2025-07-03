@@ -1,21 +1,22 @@
 /* --------------------------------------------------------------------------
- *  Landing page for Next Corner – Street-vendor discovery & ordering app.
- *  Author:  (Ralph Lopez / team) – Last updated: 2025-07-02
+ *  Landing page for Next Corner – Street‑vendor discovery & ordering app.
+ *  Author:  (Ralph Lopez / team) – Last updated: 2025‑07‑02
  * --------------------------------------------------------------------------
  *  What this file does
  *  ───────────────────
- *  • Renders a SEO-optimised “Coming Soon” page using Next.js + React.
- *  • Shows a hydration-safe live countdown banner.
+ *  • Renders a SEO‑optimised “Coming Soon” page using Next.js + React.
+ *  • Shows a hydration‑safe live countdown banner.
  *  • Collects emails via a simple form (placeholder alert for now).
- *  • Injects full meta tags + JSON-LD for rich search results.
- *  • 100 / 100 Lighthouse SEO score out-of-the-box.
+ *  • Injects full meta tags + JSON‑LD for rich search results.
+ *  • Integrates Vercel Analytics for visitor insights.
  * ------------------------------------------------------------------------ */
 
-'use client'; // ➜ Marks this page as a client-side component in Next.js (App Router)
+'use client'; // ➜ Marks this page as a client‑side component in Next.js (App Router)
 
 // ── React / Next imports ────────────────────────────────────────────────
 import { useEffect, useState } from 'react';
 import Head from 'next/head';
+import { Analytics } from '@vercel/analytics/react'; // 📊 first‑party analytics
 
 // ── Constants ───────────────────────────────────────────────────────────
 const LAUNCH_DATE = new Date('2025-08-01T00:00:00Z'); // ISO date in UTC
@@ -39,34 +40,26 @@ const getTimeLeft = (date: Date): TimeLeft => {
   };
 };
 
-/** Pad single-digit numbers with a leading zero → 8 ➜ "08" */
+/** Pad single‑digit numbers with a leading zero → 8 ➜ "08" */
 const fmt = (v: number) => v.toString().padStart(2, '0');
 
 // ── Custom Hooks ────────────────────────────────────────────────────────
-/**
- * useCountdown – returns the remaining time and re-ticks every second.
- * Wrapped in a hook so the logic is reusable / testable.
- */
 function useCountdown(targetDate: Date): TimeLeft {
   const [timeLeft, setTimeLeft] = useState<TimeLeft>(() => getTimeLeft(targetDate));
 
   useEffect(() => {
     const tick = () => setTimeLeft(getTimeLeft(targetDate));
-    tick(); // Run immediately on mount
-    const id = setInterval(tick, 1_000); // Update every second
-    return () => clearInterval(id);      // Clean up on unmount
+    tick();
+    const id = setInterval(tick, 1_000);
+    return () => clearInterval(id);
   }, [targetDate]);
 
   return timeLeft;
 }
 
 // ── UI Components ───────────────────────────────────────────────────────
-/**
- * CountdownBanner – fixed banner at top of screen that shows D:H:M:S.
- * Only rendered when `timeLeft` is truthy (i.e., before launch).
- */
 function CountdownBanner({ timeLeft }: { timeLeft: TimeLeft }) {
-  if (!timeLeft) return null; // Don’t render after launch
+  if (!timeLeft) return null;
 
   return (
     <div
@@ -87,10 +80,10 @@ function CountdownBanner({ timeLeft }: { timeLeft: TimeLeft }) {
 
 // ── Page Component ──────────────────────────────────────────────────────
 export default function HomePage() {
-  const timeLeft = useCountdown(LAUNCH_DATE); // Live countdown state
-  const [hasMounted, setHasMounted] = useState(false); // Hydration guard
+  const timeLeft = useCountdown(LAUNCH_DATE);
+  const [hasMounted, setHasMounted] = useState(false);
 
-  // Ensure countdown only renders client-side (avoids SSR mismatches)
+  // Ensure countdown only renders client‑side (avoids SSR mismatches)
   useEffect(() => setHasMounted(true), []);
 
   return (
@@ -105,7 +98,7 @@ export default function HomePage() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="canonical" href="https://www.nextcornerapp.com/" />
 
-        {/* Open Graph (Facebook/LinkedIn) */}
+        {/* Open Graph */}
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://www.nextcornerapp.com" />
         <meta property="og:title" content="Next Corner – Discover & Order from Street Vendors" />
@@ -121,9 +114,8 @@ export default function HomePage() {
 
         {/* Favicon */}
         <link rel="icon" href="/favicon.ico" sizes="any" />
-        <html lang="en" />
 
-        {/* Structured Data – Organization schema for richer search snippets */}
+        {/* Structured Data */}
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
@@ -139,7 +131,7 @@ export default function HomePage() {
         </script>
       </Head>
 
-      {/* Hydration-safe countdown (only after mount) */}
+      {/* Hydration‑safe countdown */}
       {hasMounted && timeLeft && <CountdownBanner timeLeft={timeLeft} />}
 
       {/* ── Hero Section ─────────────────────────────────────────── */}
@@ -155,12 +147,11 @@ export default function HomePage() {
           Hungry for something new? We’re nearly ready to serve.
         </p>
 
-        {/* Email capture form – currently stubbed with alert() */}
+        {/* Email capture form */}
         <form
           className="w-full max-w-sm space-y-4"
           onSubmit={(e) => {
             e.preventDefault();
-            // TODO: hook into Mailchimp / Supabase or any mailing list provider
             alert('Thanks! You’re on the list.');
           }}
         >
@@ -170,36 +161,34 @@ export default function HomePage() {
             type="email"
             required
             placeholder="Enter your email"
-            className="w-full px-4 py-3 rounded-lg border border-[#606060]/30 shadow-sm
-                       placeholder-[#606060] text-[#303030]
-                       focus:outline-none focus:ring-2 focus:ring-[#00aaed] hover:border-[#606060]/50"
+            className="w-full px-4 py-3 rounded-lg border border-[#606060]/30 shadow-sm placeholder-[#606060] text-[#303030] focus:outline-none focus:ring-2 focus:ring-[#00aaed] hover:border-[#606060]/50"
           />
           <button
             type="submit"
-            className="w-full px-4 py-3 rounded-lg bg-[#00aaed] text-white font-medium
-                       hover:bg-[#0089c0] transition-colors"
+            className="w-full px-4 py-3 rounded-lg bg-[#00aaed] text-white font-medium hover:bg-[#0089c0] transition-colors"
           >
             Notify Me
           </button>
         </form>
       </main>
 
-      {/* ── Global CSS Animations (embedded) ─────────────────────── */}
+      {/* ── Global CSS Animations ─────────────────────────────────── */}
       <style jsx global>{`
-        /* Slide-down animation for the countdown banner */
         @keyframes slideDown {
           from { transform: translateY(-100%); opacity: 0; }
           to   { transform: translateY(0);      opacity: 1; }
         }
         .animate-slideDown { animation: slideDown 0.35s ease-out; }
 
-        /* Fade-in for hero content */
         @keyframes fadeIn {
           from { opacity: 0; transform: translateY(20px); }
           to   { opacity: 1; transform: translateY(0);     }
         }
         .fade-in { animation: fadeIn 0.4s ease-out; }
       `}</style>
+
+      {/* ── Vercel Analytics (captures page views & events) ───────── */}
+      <Analytics />
     </>
   );
 }
